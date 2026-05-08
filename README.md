@@ -160,6 +160,44 @@ Codex Desktop 是一个 Electron 应用，其前端界面代码打包在 `app.as
 
 所有这些补丁都通过 AST 解析（[acorn](https://github.com/acornjs/acorn)）而非字符串替换进行，更加健壮和精确。
 
+---
+
+## ⚠️ 插件兼容性说明 / Plugin Compatibility
+
+部分插件可能在使用 API Key + 中转站时无法正常工作，原因如下：
+
+| 原因 | 说明 |
+|------|------|
+| **OAuth 依赖** | 部分插件需要 ChatGPT OAuth 登录，API Key 无法替代 |
+| **中转站兼容性** | 插件可能调用 Responses API 之外的接口，需要中转站支持 |
+| **403 路由** | 部分地区/线路访问插件市场时可能返回 403 |
+
+### 推荐排查步骤
+
+1. **确认 `config.toml` 包含以下配置**（`setup-relay.sh` 已自动写入）：
+   ```toml
+   preferred_auth_method = "apikey"
+   requires_openai_auth = true
+   wire_api = "responses"
+   ```
+
+2. **如果之前登录过 ChatGPT**，清除缓存后重启：
+   ```bash
+   rm -rf ~/.codex/.codex-global-state.json
+   pkill -f Codex; open /Applications/Codex.app
+   ```
+
+3. **部分插件需要手动启用**：进入 Plugins 页面，找到对应插件点击安装/启用。
+
+4. **确认中转站支持 Codex**：联系中转站客服确认是否支持 Codex Responses API。
+
+参考来源：
+- [Codex 中转站插件讨论](https://linux.do/t/topic/2073351/4)
+- [CC Switch 配置教程](https://juejin.cn/post/7621965789160456207)
+- [openclaw v2026.5.6 修复](https://blog.csdn.net/weixin_48502062/article/details/160863668)
+
+---
+
 ### 关于构建修复
 
 本仓库还修复了原项目 `build-from-upstream.js` 的一个 Bug：`ditto` 命令在重建 `out/` 目录时未能正确复制 `Codex.app/Contents/Frameworks/` 和 `Info.plist`，导致构建后的应用无法启动。`patch-and-build.sh` 在构建后自动补充这些缺失文件。

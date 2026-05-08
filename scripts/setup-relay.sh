@@ -123,6 +123,9 @@ config['model_providers'][relay_name] = {
 # 设置默认模型提供商
 config['model_provider'] = relay_name
 
+# 如果之前用过 ChatGPT 网页登录，强制使用 API Key
+config['preferred_auth_method'] = 'apikey'
+
 # TOML 写入
 def toml_val(v):
     if isinstance(v, bool):
