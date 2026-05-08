@@ -106,7 +106,7 @@ bash scripts/install.sh
 完成后重启 Codex 即可，无需任何手动设置。
 
 ```bash
-# 使用默认中转站 BoLu_AI
+# 使用默认中转站 BoLu_AI（注册即得1$，进QQ群得5$，推荐多得1$）
 # 推荐注册: https://boluotoken.com/register?aff=SZJR
 bash scripts/setup-relay.sh
 

@@ -30,6 +30,8 @@ AUTH_FILE="$HOME/.codex/auth.json"
 echo "== Codex 中转站配置工具 =="
 echo ""
 echo "中转站地址: $RELAY_URL"
+echo "推荐注册: https://boluotoken.com/register?aff=SZJR"
+echo "  (注册即得1$，进QQ群得5$，推荐多得1$)"
 echo ""
 
 # 确保 ~/.codex 目录存在
