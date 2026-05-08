@@ -10,10 +10,10 @@
 
 | Feature | Description |
 |---------|-------------|
-| **🔌 Plugins for API Key** | 使用 API key 登录也能显示 Plugins 入口，且导航到 Plugins 页面而非 Skills |
+| **🔌 Plugins for API Key** | 解除 UI 门控，API Key 用户可见 Plugins 入口并可进入页面（插件能否实际使用取决于中转站/API 是否支持） |
 | **⚡ Fast Mode for API Key** | 为 API key 用户开启 Fast Mode 快速模式 |
 | **📦 Pre-built DMG** | 提供开箱即用的 DMG 安装包 |
-| **🛠 Relay Config Tool** | 一键配置中转站地址和模型提供商（仅需填入 API Key） |
+| **🛠 Relay Config Tool** | 一键配置中转站地址、API Key、模型提供商（已配置的跳过即可） |
 
 > 更多补丁（如 True Delete 本地会话永久删除）可根据需求添加。
 >
@@ -59,10 +59,13 @@ bash scripts/patch-and-build.sh
 # 3. 安装到 Applications（如需密码会提示）
 bash scripts/install.sh
 
-# 4. （可选）一键配置中转站，只需再填 API Key
+# 4. （可选）如果你还没配中转站，一键配置 API Key + 中转站地址
+#    已配置过的跳过这步
 bash scripts/setup-relay.sh
 ```
 
+> **关于 Plugins**：补丁仅解除 UI 入口限制，插件能否实际调用取决于你的 API/中转站是否支持插件所需接口。
+>
 > **国内用户注意**：如果 `npm install` 下载 Electron 慢，可以先设置镜像：
 > ```bash
 > ELECTRON_MIRROR="https://npmmirror.com/mirrors/electron/" bash scripts/patch-and-build.sh
