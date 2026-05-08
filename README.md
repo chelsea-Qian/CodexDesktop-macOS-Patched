@@ -15,6 +15,8 @@
 | **📦 Pre-built DMG** | 提供开箱即用的 DMG 安装包 |
 
 > 更多补丁（如 True Delete 本地会话永久删除）可根据需求添加。
+>
+> 📖 **国内用户接入指南**：详见 [API 中转站接入教程](docs/中转站接入教程.md)
 
 ---
 
@@ -86,6 +88,25 @@ bash scripts/install.sh
 ```bash
 bash scripts/install.sh
 ```
+
+---
+
+## 🌐 国内用户使用指南 / China Users Guide
+
+国内用户如无法直接访问 OpenAI API，可以使用 API 中转站（代理服务）。
+
+完整教程 👉 **[API 中转站接入教程](docs/中转站接入教程.md)**
+
+**快速配置：**
+
+```bash
+# 启动 Codex 时配置中转站地址和 API Key
+OPENAI_BASE_URL="https://boluotoken.com" \
+OPENAI_API_KEY="sk-你的中转站key" \
+  open /Applications/Codex.app
+```
+
+> 中转站将各类模型统一转换为 OpenAI 兼容接口，支持支付宝/微信充值。
 
 ---
 
