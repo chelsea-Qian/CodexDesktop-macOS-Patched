@@ -10,9 +10,10 @@
 
 | Feature | Description |
 |---------|-------------|
-| **🔌 Plugins for API Key** | 使用 API key 登录也能显示 Plugins 入口（原仅 ChatGPT 登录可用） |
+| **🔌 Plugins for API Key** | 使用 API key 登录也能显示 Plugins 入口，且导航到 Plugins 页面而非 Skills |
 | **⚡ Fast Mode for API Key** | 为 API key 用户开启 Fast Mode 快速模式 |
 | **📦 Pre-built DMG** | 提供开箱即用的 DMG 安装包 |
+| **🛠 Relay Config Tool** | 一键配置中转站地址和模型提供商（仅需填入 API Key） |
 
 > 更多补丁（如 True Delete 本地会话永久删除）可根据需求添加。
 >
@@ -89,6 +90,18 @@ bash scripts/install.sh
 bash scripts/install.sh
 ```
 
+### `scripts/setup-relay.sh`
+
+一键配置中转站（API 代理），写入中转站地址和模型提供商，只需填入 API Key 即可使用。
+
+```bash
+# 使用默认中转站 (BoLu_AI)
+bash scripts/setup-relay.sh
+
+# 或指定自定义地址
+bash scripts/setup-relay.sh https://your-relay-server.com
+```
+
 ---
 
 ## 🌐 国内用户使用指南 / China Users Guide
@@ -97,13 +110,14 @@ bash scripts/install.sh
 
 完整教程 👉 **[API 中转站接入教程](docs/中转站接入教程.md)**
 
-**快速配置：**
+**快速配置（一键脚本，仅需填入 API Key）：**
 
 ```bash
-# 启动 Codex 时配置中转站地址和 API Key
-OPENAI_BASE_URL="https://boluotoken.com" \
-OPENAI_API_KEY="sk-你的中转站key" \
-  open /Applications/Codex.app
+# 1. 配置中转站地址和模型提供商
+bash scripts/setup-relay.sh
+
+# 2. 打开 Codex 填入 API Key 即可使用
+open /Applications/Codex.app
 ```
 
 > 中转站将各类模型统一转换为 OpenAI 兼容接口，支持支付宝/微信充值。
