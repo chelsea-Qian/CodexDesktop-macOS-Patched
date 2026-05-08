@@ -191,6 +191,19 @@ Codex Desktop 是一个 Electron 应用，其前端界面代码打包在 `app.as
 
 4. **确认中转站支持 Codex**：联系中转站客服确认是否支持 Codex Responses API。
 
+### 备选方案：Codex++（运行时注入）
+
+如果插件还是不能用，可以试试 **Codex++**（[BigPizzaV3/CodexPlusPlus](https://github.com/BigPizzaV3/CodexPlusPlus)），它通过 Chrome DevTools Protocol 在运行时注入脚本解锁插件，和本项目的静态补丁互补：
+
+```bash
+git clone https://github.com/BigPizzaV3/CodexPlusPlus.git
+cd CodexPlusPlus
+pip install -e .
+# 然后用 Codex++ 启动器打开 Codex
+```
+
+> 注意：Codex++ 用启动器打开 Codex，和我们直接打开 Codex.app 是两种方式，可以并存。
+
 参考来源：
 - [Codex 中转站插件讨论](https://linux.do/t/topic/2073351/4)
 - [CC Switch 配置教程](https://juejin.cn/post/7621965789160456207)
