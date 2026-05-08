@@ -116,14 +116,20 @@ bash scripts/setup-relay.sh https://your-relay-server.com
 
 完整教程 👉 **[API 中转站接入教程](docs/中转站接入教程.md)**
 
-**快速配置（一键脚本，仅需填入 API Key）：**
+**快速配置（一键脚本，仅需手动填入 API Key）：**
 
 ```bash
 # 1. 配置中转站地址和模型提供商
 bash scripts/setup-relay.sh
 
-# 2. 打开 Codex 填入 API Key 即可使用
+# 2. 打开 Codex
 open /Applications/Codex.app
+
+# 3. 手动操作：
+#    → 点击左下角 Settings ⚙️
+#    → 找到 API Key 输入框，填入你的中转站 Key
+#    → Model 下拉中选择 "relay"
+#    → 选择一个模型，即可开始使用
 ```
 
 > 中转站将各类模型统一转换为 OpenAI 兼容接口，支持支付宝/微信充值。
