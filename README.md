@@ -98,10 +98,16 @@ bash scripts/install.sh
 
 ### `scripts/setup-relay.sh`
 
-一键配置中转站（API 代理），写入中转站地址和模型提供商，只需填入 API Key 即可使用。
+一键配置中转站（API 代理）+ API Key。依次完成：
+1. 📝 提示输入 API Key（或检测已有的 `auth.json`）
+2. 🔧 写入中转站地址和模型提供商到 `~/.codex/config.toml`
+3. 🔑 保存 API Key 到 `~/.codex/auth.json`
+
+完成后重启 Codex 即可，无需任何手动设置。
 
 ```bash
-# 使用默认中转站 BoLu_AI (推荐注册链接: https://boluotoken.com/register?aff=SZJR)
+# 使用默认中转站 BoLu_AI
+# 推荐注册: https://boluotoken.com/register?aff=SZJR
 bash scripts/setup-relay.sh
 
 # 或指定自定义地址
@@ -116,21 +122,17 @@ bash scripts/setup-relay.sh https://your-relay-server.com
 
 完整教程 👉 **[API 中转站接入教程](docs/中转站接入教程.md)**
 
-**快速配置（一键脚本，仅需手动填入 API Key）：**
+**快速配置（一键脚本，自动写 API Key 到 auth.json）：**
 
 ```bash
-# 1. 配置中转站地址和模型提供商
+# 1. 配置中转站地址 + 模型提供商 + API Key
 bash scripts/setup-relay.sh
 
-# 2. 打开 Codex
-open /Applications/Codex.app
-
-# 3. 手动操作：
-#    → 点击左下角 Settings ⚙️
-#    → 找到 API Key 输入框，填入你的中转站 Key
-#    → Model 下拉中选择 "relay"
-#    → 选择一个模型，即可开始使用
+# 2. 重启 Codex
+pkill -f Codex; open /Applications/Codex.app
 ```
+
+脚本会自动写入 `~/.codex/config.toml`（中转站配置）和 `~/.codex/auth.json`（API Key），重启 Codex 即可使用。
 
 > 中转站将各类模型统一转换为 OpenAI 兼容接口，支持支付宝/微信充值。
 

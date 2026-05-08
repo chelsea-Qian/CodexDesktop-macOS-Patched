@@ -1,12 +1,14 @@
 #!/bin/bash
-# setup-relay.sh — 一键配置 Codex 接入 API 中转站
+# setup-relay.sh — 一键配置 Codex 接入 API 中转站（含 API Key）
 # 用法: bash scripts/setup-relay.sh [中转站地址]
 # 示例:
 #   bash scripts/setup-relay.sh
 #   bash scripts/setup-relay.sh https://boluotoken.com
 #
-# 此脚本会配置中转站信息到 ~/.codex/config.toml
-# 你仍需要在 Codex 中手动填入 API Key
+# 此脚本会:
+#   1. 配置中转站信息到 ~/.codex/config.toml
+#   2. 写入 API Key 到 ~/.codex/auth.json
+# 完成后重启 Codex 即可使用，无需手动设置。
 #
 # 前置条件: 需要 Python 3.11+ (macOS 自带)
 
@@ -23,24 +25,68 @@ DEFAULT_RELAY="https://boluotoken.com"
 RELAY_URL="${1:-$DEFAULT_RELAY}"
 RELAY_NAME="relay"
 CONFIG_FILE="$HOME/.codex/config.toml"
+AUTH_FILE="$HOME/.codex/auth.json"
 
 echo "== Codex 中转站配置工具 =="
 echo ""
 echo "中转站地址: $RELAY_URL"
-echo "配置文件:   $CONFIG_FILE"
 echo ""
 
 # 确保 ~/.codex 目录存在
 mkdir -p "$HOME/.codex"
 
-# 备份旧配置
+# ─── 读取或输入 API Key ─────────────────────────────────────────
+AUTH_KEY=""
+if [ -f "$AUTH_FILE" ]; then
+    EXISTING_KEY=$(python3 -c "
+import json
+try:
+    with open('$AUTH_FILE') as f:
+        d = json.load(f)
+    print(d.get('OPENAI_API_KEY', ''))
+except:
+    print('')
+" 2>/dev/null || echo "")
+    if [ -n "$EXISTING_KEY" ]; then
+        echo "🔑 检测到已有 API Key: ${EXISTING_KEY:0:8}..."
+        read -p "   是否使用此 Key？(Y/n): " USE_EXISTING
+        if [[ "$USE_EXISTING" =~ ^[Nn] ]]; then
+            read -p "   请输入新的 API Key (留空跳过): " AUTH_KEY
+        else
+            AUTH_KEY="$EXISTING_KEY"
+        fi
+    fi
+fi
+
+if [ -z "$AUTH_KEY" ] && [ ! -f "$AUTH_FILE" ]; then
+    echo "🔑 请输入你的中转站 API Key（从 boluotoken 控制台 → 令牌 获取）"
+    echo "   留空则跳过，后续可手动编辑 ~/.codex/auth.json"
+    read -p "   API Key: " AUTH_KEY
+fi
+
+# ─── 写入 API Key ────────────────────────────────────────────────
+if [ -n "$AUTH_KEY" ]; then
+    # 备份旧的 auth.json
+    if [ -f "$AUTH_FILE" ]; then
+        cp "$AUTH_FILE" "$AUTH_FILE.backup-$(date +%Y%m%d-%H%M%S)"
+    fi
+    python3 -c "
+import json
+with open('$AUTH_FILE', 'w') as f:
+    json.dump({'OPENAI_API_KEY': '$AUTH_KEY'}, f)
+" 2>/dev/null
+    chmod 600 "$AUTH_FILE"
+    echo "✅ API Key 已保存到: $AUTH_FILE"
+fi
+
+# ─── 备份旧 config.toml ──────────────────────────────────────────
 if [ -f "$CONFIG_FILE" ]; then
     BACKUP="$CONFIG_FILE.backup-$(date +%Y%m%d-%H%M%S)"
     cp "$CONFIG_FILE" "$BACKUP"
     echo "📦 已备份旧配置到: $BACKUP"
 fi
 
-# 使用 Python tomllib 读写 TOML
+# ─── 写入中转站配置到 config.toml ───────────────────────────────
 python3 << PYEOF
 import os, json
 
@@ -77,11 +123,9 @@ config['model_provider'] = relay_name
 
 # TOML 写入
 def toml_val(v):
-    """将 Python 值转换为 TOML 格式字符串"""
     if isinstance(v, bool):
         return 'true' if v else 'false'
     if isinstance(v, str):
-        # 含特殊字符的字符串需要引号
         if any(c in v for c in ' "#=\'') or v == '':
             return json.dumps(v)
         return v
@@ -94,7 +138,6 @@ def toml_val(v):
         return json.dumps(v)
     return json.dumps(v)
 
-# 构建 TOML 内容
 lines = []
 for section, values in sorted(config.items()):
     if not isinstance(values, dict):
@@ -103,7 +146,6 @@ for section, values in sorted(config.items()):
     lines.append(f'\n[{section}]')
     for k, v in sorted(values.items()):
         if isinstance(v, dict):
-            # 嵌套字典
             lines.append(f'[{section}.{k}]')
             for sk, sv in sorted(v.items()):
                 lines.append(f'{sk} = {toml_val(sv)}')
@@ -119,17 +161,13 @@ print(f'   API 地址:   {relay_url}/v1')
 PYEOF
 
 echo ""
-echo "🎉 配置完成！"
+echo "🎉 全部配置完成！"
 echo ""
-echo "下一步（手动操作）："
-echo "  1. 打开 Codex: open /Applications/Codex.app"
-echo "  2. 点击左下角 Settings ⚙️"
-echo "  3. 在 API Key 输入框填入你的中转站 Key"
-echo "  4. 在 Model 下拉中选择 'relay'"
-echo "  5. 选择一个模型后即可使用"
+echo "现在重启 Codex 即可使用:"
+echo "  pkill -f Codex; open /Applications/Codex.app"
 echo ""
-echo "或者通过命令行启动时指定 API Key（跳过设置界面）:"
-echo "  OPENAI_API_KEY=\"sk-你的key\" open /Applications/Codex.app"
+echo "如果 Model 没有自动选择 'relay'，手动设置:"
+echo "  Settings → Model → 选 relay → 选模型"
 echo ""
 echo "如需恢复旧配置:"
 echo "  cp \"$BACKUP\" \"$CONFIG_FILE\""
