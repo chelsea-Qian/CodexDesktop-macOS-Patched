@@ -101,7 +101,7 @@ bash scripts/install.sh
 一键配置中转站（API 代理），写入中转站地址和模型提供商，只需填入 API Key 即可使用。
 
 ```bash
-# 使用默认中转站 (BoLu_AI)
+# 使用默认中转站 BoLu_AI (推荐注册链接: https://boluotoken.com/register?aff=SZJR)
 bash scripts/setup-relay.sh
 
 # 或指定自定义地址
