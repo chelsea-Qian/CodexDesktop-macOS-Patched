@@ -12,6 +12,41 @@ PROJECT_ROOT="$PWD"
 echo "== Codex Patch & Build for macOS arm64 =="
 echo ""
 
+# ─── Prerequisite checks ────────────────────────────────────────
+echo "[0/6] Checking prerequisites..."
+
+# Check Node.js
+if ! command -v node &>/dev/null; then
+    echo "❌ Node.js not found. Please install Node.js 18+ from https://nodejs.org"
+    exit 1
+fi
+NODE_VER=$(node -v | sed 's/v//' | cut -d. -f1)
+if [ "$NODE_VER" -lt 18 ]; then
+    echo "❌ Node.js 18+ required. Current: $(node -v)"
+    echo "   Download from https://nodejs.org"
+    exit 1
+fi
+echo "  ✓ Node.js $(node -v)"
+
+# Check npm
+if ! command -v npm &>/dev/null; then
+    echo "❌ npm not found. Please install Node.js 18+ from https://nodejs.org"
+    exit 1
+fi
+echo "  ✓ npm $(npm -v)"
+
+# Check if dependencies are installed
+if [ ! -d "node_modules" ]; then
+    echo "  → Installing dependencies..."
+    npm install 2>&1 || {
+        echo "❌ npm install failed."
+        echo "   If you're in China, try: ELECTRON_MIRROR=\"https://npmmirror.com/mirrors/electron/\" npm install"
+        exit 1
+    }
+fi
+echo "  ✓ Dependencies installed"
+echo ""
+
 # ─── Step 1: Sync upstream (if needed) ─────────────────────────
 if [ ! -d "src/mac-arm64/_asar" ]; then
     echo "[1/6] Syncing upstream Codex..."

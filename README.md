@@ -46,24 +46,27 @@ open Codex-mac-arm64-26.506.21252.dmg
 1. 打开 **系统设置 → 隐私与安全性**
 2. 向下滚动，在"安全性"部分点击 **"仍要打开"**
 
-### 方式二：从源码构建
+### 方式二：从源码构建（完整流程）
 
 ```bash
 # 1. 克隆仓库
 git clone https://github.com/chelsea-Qian/CodexDesktop-macOS-Patched.git
 cd CodexDesktop-macOS-Patched
 
-# 2. 安装依赖（国内用户建议使用镜像）
-npm install
-# 或使用国内镜像：
-# ELECTRON_MIRROR="https://npmmirror.com/mirrors/electron/" npm install
-
-# 3. 一键补丁 + 构建
+# 2. 一键补丁 + 构建 + 安装（自动检查 npm/node）
 bash scripts/patch-and-build.sh
 
-# 4. 安装
+# 3. 安装到 Applications（如需密码会提示）
 bash scripts/install.sh
+
+# 4. （可选）一键配置中转站，只需再填 API Key
+bash scripts/setup-relay.sh
 ```
+
+> **国内用户注意**：如果 `npm install` 下载 Electron 慢，可以先设置镜像：
+> ```bash
+> ELECTRON_MIRROR="https://npmmirror.com/mirrors/electron/" bash scripts/patch-and-build.sh
+> ```
 
 ---
 
@@ -71,16 +74,19 @@ bash scripts/install.sh
 
 ### `scripts/patch-and-build.sh`
 
-一键完成所有操作，适合 Codex 更新后重新构建：
+一键完成所有操作，自动检查 npm/node → 同步上游 → 应用补丁 → 构建 → 修复 → 签名 → DMG：
 
 ```
+步骤 0/6 — 检查 Node.js、npm、依赖是否安装 ✓
 步骤 1/6 — 同步上游 Codex（从 OpenAI CDN 下载最新版）
-步骤 2/6 — 应用补丁（Plugins + Fast Mode）
+步骤 2/6 — 应用 AST 补丁（插件门控 + Fast Mode + i18n + DevTools）
 步骤 3/6 — 构建 macOS arm64 应用
 步骤 4/6 — 修复缺失的 Frameworks / Info.plist
 步骤 5/6 — 更新 ASAR integrity hash + 重新签名
 步骤 6/6 — 创建 DMG 安装包
 ```
+
+> 如果遇到权限错误，确保已安装 Node.js 18+。国内用户建议设置 Electron 镜像。
 
 ### `scripts/install.sh`
 
