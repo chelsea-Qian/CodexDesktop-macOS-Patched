@@ -1,7 +1,7 @@
 {
   "name": "codex-rebuild",
   "productName": "Codex",
-  "version": "26.1027.61615",
+  "version": "26.1029.61003",
   "description": "Codex Electron App - Cross-platform Build",
   "main": "src/.vite/build/bootstrap.js",
   "scripts": {
